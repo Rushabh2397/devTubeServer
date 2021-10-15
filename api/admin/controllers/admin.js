@@ -10,7 +10,7 @@ module.exports = {
     addVideo: (req, res) => {
         async.waterfall([
             (nextCall) => {
-                if (!req.body.url || !req.body.title || !req.body.description || !req.body.creator || !req.body.description) {
+                if (!req.body.url || !req.body.title || !req.body.description || !req.body.channel_name || !req.body.description) {
                     return nextCall({
                         message: 'Missing Parameter'
                     })

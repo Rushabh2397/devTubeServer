@@ -10,7 +10,7 @@ router.all('api/*',userAuthenticated,isUserPresent);
 
 // Admin's api
 
-router.post('/api/add_vide',AdminController.addVideo)
+router.post('/auth/add_video',AdminController.addVideo)
 router.put('/api/updateVideoDetail',AdminController.updateVideoDetail)
 router.post('/api/delete_video',AdminController.deleteVideo)
 

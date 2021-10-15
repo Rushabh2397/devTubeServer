@@ -3,36 +3,42 @@ const moment = require('moment');
 const { encrypt } = require('../utils/encryDecry')
 
 
-const userSchema = new Schema({
+const videoSchema = new Schema({
 
     title: {
         type: String
     },
-    url:{
-      type: String
+    url: {
+        type: String
     },
-    creator: {
+    channel_name: {
+        type: String
+    },
+    channel_image: {
+        type: String
+    },
+    thumbnail: {
         type: String
     },
     length: {
         type: String
     },
-    keywords:{
+    keywords: {
         type: Array
     },
-    description:{
-       type: String 
+    description: {
+        type: String
     },
     created_at: {
         type: Date
     }
 }, { collection: 'video' })
 
-userSchema.pre('save', function (next) {
-    let user = this;
-    user.password = encrypt(user.password);
-    user.created_at = user.updated_at = moment().unix() * 1000;
+videoSchema.pre('save', function (next) {
+    let video = this;
+    //user.password = encrypt(user.password);
+    video.created_at = moment().unix() * 1000;
     next()
 })
 
-module.exports = model(userSchema.options.collection, userSchema)
+module.exports = model(videoSchema.options.collection, videoSchema)

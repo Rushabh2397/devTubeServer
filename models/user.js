@@ -14,6 +14,34 @@ const userSchema = new Schema({
     password: {
         type: String
     },
+    playlist: [
+        {
+            name: String,
+            videos: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'video'
+                }
+            ],
+            created_at: Date
+        }
+    ],
+    liked_videos: [
+        {
+
+            type: Schema.Types.ObjectId,
+            ref: 'video'
+
+        }
+    ],
+    watch_later: [
+        {
+
+            type: Schema.Types.ObjectId,
+            ref: 'video'
+
+        }
+    ],
     created_at: {
         type: Date
     },
