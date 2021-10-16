@@ -25,7 +25,7 @@ module.exports = {
             (body, nextCall) => {
                 User.findOneAndUpdate(
                     {
-                        _id: mongoose.Types.ObjectId("615f0eb05ec36ea7621230f7")
+                        _id: req.user._id
                     },
                     {
                         $addToSet: {
@@ -59,7 +59,6 @@ module.exports = {
     removeFromWatchLater: (req, res) => {
         async.waterfall([
             (nextCall) => {
-                req.user = { _id: "615f0eb05ec36ea7621230f7" }
                 if (!req.body.video_id) {
                     return nextCall({
                         message: 'Video id is required.'
@@ -100,5 +99,35 @@ module.exports = {
                 data: response
             })
         })
+    },
+    getUserWatchLater : (req,res)=>{
+        async.waterfall([
+            (nextCall)=>{
+                User.findById(req.user._id).populate('watch_later').exec((err,user)=>{
+                    if(err){
+                        return nextCall(err)
+                    }
+                    const response = {
+                        playlist : user.playlist,
+                        likedVideos : user.liked_videos,
+                        watch_later : user.watch_later
+                    }
+                    nextCall(null,response)
+                })
+            }
+        ],(err,response)=>{
+            if(err){
+                return res.status(400).json({
+                    message : (err && err.message) || 'Oops! Failed to get user liked videos.'
+                })
+            }
+
+            res.json({
+                status:'success',
+                message: 'User watch later list.',
+                data: response
+            })
+        })
     }
+
 }

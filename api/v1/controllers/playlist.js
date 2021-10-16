@@ -14,7 +14,6 @@ module.exports = {
     createPlaylist: (req, res) => {
         async.waterfall([
             (nextCall) => {
-                //req.user._id="615f0eb05ec36ea7621230f7"
                 if (!req.body.name) {
                     return nextCall({
                         message: 'Playlist name is required.'
@@ -30,7 +29,7 @@ module.exports = {
                     created_at: moment().unix() * 1000
                 }
                 User.findByIdAndUpdate(
-                    "615f0eb05ec36ea7621230f7",
+                    req.user._id,
                     {
                         $push: {
                             playlist: newPlaylist
@@ -60,7 +59,6 @@ module.exports = {
     },
 
     addToPlaylist: (req, res) => {
-        console.log("body",req.body)
         async.waterfall([
             (nextCall) => {
                 if (!req.body.video_id) {
@@ -73,7 +71,7 @@ module.exports = {
             (body, nextCall) => {
                 User.findOneAndUpdate(
                     {
-                        _id: mongoose.Types.ObjectId("615f0eb05ec36ea7621230f7"),
+                        _id: req.user._id,
                         "playlist._id": body.playlist_id
                     },
                     {
@@ -108,7 +106,6 @@ module.exports = {
     removeFromPlaylist: (req, res) => {
         async.waterfall([
             (nextCall) => {
-                req.user = { _id: "615f0eb05ec36ea7621230f7" }
                 if (!req.body.playlist_id || !req.body.video_id) {
                     return nextCall({
                         message: 'Playlist/Video id is required.'
@@ -146,7 +143,7 @@ module.exports = {
 
             res.json({
                 status: 'success',
-                message: 'Video removed successfully.',
+                message: 'Video removed from playlist.',
                 data: response
             })
         })
@@ -155,7 +152,6 @@ module.exports = {
     deletePlaylist: (req, res) => {
         async.waterfall([
             (nextCall) => {
-                req.user = { _id: "615f0eb05ec36ea7621230f7" }
                 if (!req.body.playlist_id) {
                     return nextCall({
                         message: 'Playlist id is required.'
@@ -192,6 +188,36 @@ module.exports = {
             res.json({
                 status: 'success',
                 message: 'Playlist deleted successfully.',
+                data: response
+            })
+        })
+    },
+
+    getUserPlaylist : (req,res)=>{
+        async.waterfall([
+            (nextCall)=>{
+                User.findById(req.user._id).populate('playlist.videos').exec((err,user)=>{
+                    if(err){
+                        return nextCall(err)
+                    }
+                    const response = {
+                        playlist : user.playlist,
+                        likedVideos : user.liked_videos,
+                        watch_later : user.watch_later
+                    }
+                    nextCall(null,response)
+                })
+            }
+        ],(err,response)=>{
+            if(err){
+                return res.status(400).json({
+                    message : (err && err.message) || 'Oops! Failed to get user playlist'
+                })
+            }
+
+            res.json({
+                status:'success',
+                message: 'User playlist',
                 data: response
             })
         })

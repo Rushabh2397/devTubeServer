@@ -3,6 +3,7 @@ import config from '../../../config'
 module.exports = (req,res,next)=>{
 
     let token = req.headers ? req.headers['token'] : ''
+
     jwt.verify(token,config.secret,(err,tok)=>{
         if(err){
             return res.status(401).json({

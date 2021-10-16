@@ -6,7 +6,6 @@ module.exports = (req,res,next)=>{
             message :'Invalid user.'
         })
     }
-    
     User.findById(req.user._id,(err,user)=>{
         if(err){
             return res.status(500).json({

@@ -160,12 +160,10 @@ module.exports = {
     getUserChoices : (req, res) => {
         async.waterfall([
             (nextCall) => {
-                req.user = { _id: "615f0eb05ec36ea7621230f7" }
                 User.findById(req.user._id).exec((err, user) => {
                     if (err) {
                         return nextCall(err)
                     }
-                    console.log("user",user)
                     const response = {
                         playlist : user.playlist,
                         likedVideos : user.liked_videos,
@@ -184,6 +182,53 @@ module.exports = {
             res.json({
                 status: 'success',
                 message: 'Video Info',
+                data: response
+            })
+        })
+    },
+
+    searchVideo  : (req,res)=>{
+        async.waterfall([
+            (nextCall)=>{
+                let aggregateQuery = [];
+
+                let regex = new RegExp(req.body.searchTerm, 'i')
+          
+                let search = {
+                    $or: [
+                        {
+                          'title': regex
+                        },
+                        {
+                          'channel_name': regex
+                        },
+                        {
+                            'keywords': regex
+                        }
+                      ]
+                }
+          
+                aggregateQuery.push({
+                    '$match': search
+                })
+
+                Video.aggregate(aggregateQuery).exec((err,list)=>{
+                    if(err){
+                        return nextCall(err)
+                    }
+                    nextCall(null,list)
+                })
+            }
+        ],(err,response)=>{
+            if (err) {
+                return res.status(400).json({
+                    message: (err && err.message) || 'Oops! Failed to perform search. '
+                })
+            }
+
+            res.json({
+                status: 'success',
+                message: 'Search Result',
                 data: response
             })
         })
