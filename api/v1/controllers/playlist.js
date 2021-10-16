@@ -55,7 +55,7 @@ module.exports = {
             res.json({
                 status: 'success',
                 message: 'Playlist created',
-                data: playlist
+                data: response
             })
         })
     },
