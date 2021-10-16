@@ -108,10 +108,12 @@ module.exports = {
     },
 
     getAllVideos: (req, res) => {
+        console.log("req".req.body)
         async.waterfall([
             (nextCall) => {
                 Video.find({}, (err, videos) => {
                     if (err) {
+                        console.log("err",err)
                         return nextCall(err)
                     }
                     nextCall(null, videos)
@@ -119,6 +121,7 @@ module.exports = {
             }
         ], (err, response) => {
             if (err) {
+                console.log("err",err)
                 return res.status(400).json({
                     message: (err && err.message) || 'Oops! Failed to get videos. '
                 })
