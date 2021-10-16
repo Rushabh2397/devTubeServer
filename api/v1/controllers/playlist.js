@@ -36,11 +36,12 @@ module.exports = {
                         }
                     },
                     { new: true },
-                    (err, playlist) => {
+                    (err, user) => {
                         if (err) {
                             return nextCall(err)
                         }
-                        nextCall(null, null)
+                        let playlist = user.playlist.find(play=>play.name==body.name)
+                        nextCall(null, playlist)
                     }
                 )
             }
@@ -53,7 +54,8 @@ module.exports = {
 
             res.json({
                 status: 'success',
-                message: 'Playlist created'
+                message: 'Playlist created',
+                data: playlist
             })
         })
     },
