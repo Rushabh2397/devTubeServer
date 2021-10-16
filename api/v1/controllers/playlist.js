@@ -99,7 +99,7 @@ module.exports = {
 
             res.json({
                 status: 'success',
-                message: 'Video to added.'
+                message: 'Video added to playlist.'
             })
         })
     },
